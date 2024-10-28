@@ -24,6 +24,9 @@ response.sendRedirect("login_page.jsp");
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link href="css/mycss.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>.primary-background{
+    background:#3d5afe!important;
+}</style>
 	</head>
 	<body>
 		<!-- navbar -->
@@ -99,13 +102,13 @@ response.sendRedirect("login_page.jsp");
 				
 				<div class="col-md-4">
 				<div class="list-group">
-   <a href="#" onclick="getPosts(0,this)"class="c-link list-group-item list-group-item-action active">All Posts</a>
+   <a href="#" class="list-group-item list-group-item-action active">All Posts</a>
    <%
    PostDao d=new PostDao(ConnectionProvider.getConnection());
    ArrayList<Category> list1=d.getAllCategories();
    for(Category cc:list1){
 		%>
-      <a href="#" onclick="getPosts(<%=cc.getCid()%>,this)" class="c-link list-group-item list-group-item-action"><%=cc.getName()%></a>
+      <a href="#" class="list-group-item list-group-item-action"><%=cc.getName()%></a>
 
    
    <%
@@ -117,16 +120,12 @@ response.sendRedirect("login_page.jsp");
 </div>	
 				</div>
 				<!--posts-->
-				<div class="col-md-8" >
+				<div class="col-md-8">
 					<div class="container text-center" id="loader">
 						<i class="fa fa-refresh fa-4x fa-spin"></i>
 						<h3 class="mt-2">Loading...</h3>
 					</div>
-					<div class="container-fluid" id="post-container">
-					
 				</div>
-				</div>
-				
 				
 			</div>
 			
@@ -311,7 +310,40 @@ response.sendRedirect("login_page.jsp");
         <script src="js/myjs.js" type="text/javascript"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>function doLike(postId, userId) {
+    $.ajax({
+        url: "LikeServlet",
+        type: "POST",
+        data: {
+            operation: "like",
+            pid: postId,
+            uid: userId
+        },
+        success: function (data) {
+            let likeCounter = $("#like-counter-" + postId);
+            let currentLikes = parseInt(likeCounter.text());
 
+            // Ensure the currentLikes doesn't go negative
+            if (isNaN(currentLikes)) {
+                currentLikes = 0;
+            }
+
+            if (data.trim() == "liked") {
+                likeCounter.text(currentLikes + 1); // Increment like count
+            } else if (data.trim() == "unliked") {
+                if (currentLikes > 0) {
+                    likeCounter.text(currentLikes - 1); // Decrement like count
+                }
+            } else {
+                console.error("Error: ", data);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error: " + error);
+        }
+    });
+}
+</script>
 	
 	<script>
 		$(document).ready(function(){
@@ -374,34 +406,6 @@ response.sendRedirect("login_page.jsp");
 				
 			})
 		})	
-			
-		</script>
-		
-		<!--loading post using ajax-->
-		<script>
-			function getPosts(catId,temp){
-				$("#loader").show();
-				$("#post-container").hide();
-				$(".c-link").removeClass('active');
-				
-				$.ajax({
-				url:"load_post.jsp",
-				data:{cid:catId},
-				success: function(data,textStatus,jqXHR){
-					console.log(data);
-					$("#loader").hide();
-					$("#post-container").show();
-					$("#post-container").html(data)
-					$(temp).addClass('active')
-				}
-				
-			})
-			}
-			$(document).ready(function(e){
-				let allPostRef=$('.c-link')[0]
-				
-				getPosts(0,allPostRef);
-			})
 			
 		</script>
 	</body>	

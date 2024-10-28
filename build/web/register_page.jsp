@@ -12,6 +12,9 @@
 	<link href="css/mycss.css" rel="stylesheet" type="text/css"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <style>
+		.primary-background{
+    background:#3d5afe!important;
+}
             .banner-background{
                 clip-path: polygon(30% 0%, 70% 0%, 100% 0, 100% 91%, 63% 100%, 22% 91%, 0 99%, 0 0);
             }
@@ -105,7 +108,43 @@
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script src="js/myjs.js" type="text/javascript"></script>
+        <script >
+		
+		function doLike(postId, userId) {
+    $.ajax({
+        url: "LikeServlet",
+        type: "POST",
+        data: {
+            operation: "like",
+            pid: postId,
+            uid: userId
+        },
+        success: function (data) {
+            let likeCounter = $("#like-counter-" + postId);
+            let currentLikes = parseInt(likeCounter.text());
+
+            // Ensure the currentLikes doesn't go negative
+            if (isNaN(currentLikes)) {
+                currentLikes = 0;
+            }
+
+            if (data.trim() == "liked") {
+                likeCounter.text(currentLikes + 1); // Increment like count
+            } else if (data.trim() == "unliked") {
+                if (currentLikes > 0) {
+                    likeCounter.text(currentLikes - 1); // Decrement like count
+                }
+            } else {
+                console.error("Error: ", data);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error: " + error);
+        }
+    });
+}
+
+	</script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
        
 <script>

@@ -125,6 +125,7 @@ response.sendRedirect("login_page.jsp");
 						<i class="fa fa-refresh fa-4x fa-spin"></i>
 						<h3 class="mt-2">Loading...</h3>
 					</div>
+
 				</div>
 				
 			</div>
@@ -366,6 +367,27 @@ response.sendRedirect("login_page.jsp");
 		
 	})
 		});
+		   function getPosts(catId, temp) {
+            $("#loader").show();
+            $("#post-container").hide();
+            $(".c-link").removeClass('active');
+            $.ajax({
+                url: "load_post.jsp",
+                data: {cid: catId},
+                success: function(data) {
+                    $("#loader").hide();
+                    $("#post-container").show();
+                    $('#post-container').html(data);
+                    $(temp).addClass('active');
+                }
+            });
+        }
+
+        // Initial load for all posts
+        $(document).ready(function() {
+            let allPostRef = $('.c-link')[0];
+            getPosts(0, allPostRef);
+        });
 		</script>
 		<!--now add post js-->
 		<script>

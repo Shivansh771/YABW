@@ -99,13 +99,13 @@ response.sendRedirect("login_page.jsp");
 				
 				<div class="col-md-4">
 				<div class="list-group">
-   <a href="#" onclick="getPosts(0,this)"class="c-link list-group-item list-group-item-action active">All Posts</a>
+   <a href="#" class="list-group-item list-group-item-action active">All Posts</a>
    <%
    PostDao d=new PostDao(ConnectionProvider.getConnection());
    ArrayList<Category> list1=d.getAllCategories();
    for(Category cc:list1){
 		%>
-      <a href="#" onclick="getPosts(<%=cc.getCid()%>,this)" class="c-link list-group-item list-group-item-action"><%=cc.getName()%></a>
+      <a href="#" class="list-group-item list-group-item-action"><%=cc.getName()%></a>
 
    
    <%
@@ -117,16 +117,12 @@ response.sendRedirect("login_page.jsp");
 </div>	
 				</div>
 				<!--posts-->
-				<div class="col-md-8" >
+				<div class="col-md-8">
 					<div class="container text-center" id="loader">
 						<i class="fa fa-refresh fa-4x fa-spin"></i>
 						<h3 class="mt-2">Loading...</h3>
 					</div>
-					<div class="container-fluid" id="post-container">
-					
 				</div>
-				</div>
-				
 				
 			</div>
 			
@@ -374,34 +370,6 @@ response.sendRedirect("login_page.jsp");
 				
 			})
 		})	
-			
-		</script>
-		
-		<!--loading post using ajax-->
-		<script>
-			function getPosts(catId,temp){
-				$("#loader").show();
-				$("#post-container").hide();
-				$(".c-link").removeClass('active');
-				
-				$.ajax({
-				url:"load_post.jsp",
-				data:{cid:catId},
-				success: function(data,textStatus,jqXHR){
-					console.log(data);
-					$("#loader").hide();
-					$("#post-container").show();
-					$("#post-container").html(data)
-					$(temp).addClass('active')
-				}
-				
-			})
-			}
-			$(document).ready(function(e){
-				let allPostRef=$('.c-link')[0]
-				
-				getPosts(0,allPostRef);
-			})
 			
 		</script>
 	</body>	
